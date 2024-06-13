@@ -1,0 +1,19 @@
+﻿@model TurkMedya.Models.DetayViewModel
+
+<p>@Html.Raw(Model.BodyText)</p>
+<p>Item Id: @Model.Id</p>
+<h2>Related News Short Text</h2>
+
+@if (!string.IsNullOrEmpty(Model.RelatedNewsShortText))
+{
+    <div>
+        <h3>Related News:</h3>
+        <p>@Model.RelatedNewsShortText</p>
+    </div>
+}
+else
+{
+    <p>No related news found.</p>
+}
+
+<a asp-controller="Home" asp-action="Index">Back to Homepage</a>

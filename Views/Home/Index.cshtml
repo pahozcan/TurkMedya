@@ -1,0 +1,181 @@
+﻿@model AnasayfaViewModel
+
+@{
+    ViewData["Title"] = "Türk Medya Ana Sayfası";
+}
+
+<h1 style="text-align:center">@ViewData["Title"]</h1>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" />
+
+<div style="display: flex; justify-content: space-between;padding-top:30px;">
+    <div>
+        <nav aria-label="Page navigation" style="display:none">
+            <ul class="pagination">
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                        <a class="page-link" href="?page=@i">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+    <div style="display: flex; align-items: center;">
+        <div id="searchOptions" style="margin-right: 10px;">
+            <select id="category" class="form-control">
+                <option value="">All Categories</option>
+                @foreach (var category in ViewBag.CategoryTitles)
+                {
+                    <option value="@category">@category</option>
+                }
+            </select>
+            <input type="text" id="keyword" class="form-control" placeholder="Enter keyword...">
+            <button id="filterBtn" class="primary" style="margin-top:30px;text-align:center;">Filtrele</button>
+        </div>
+        <button id="searchBtn" class="fas fa-search"></button>
+    </div>
+</div>
+
+@if (Model.Data != null && Model.Data.Any())
+{
+    foreach (var dataItem in Model.Data)
+    {
+        if (dataItem.ItemList != null && dataItem.ItemList.Any())
+        {
+            <div style="padding-top:60px">
+                <table class="table">
+                    <thead>
+                        <tr style="text-align:center">
+                            <th>İlgili Görsel</th>
+                            <th>Kısa Açıklama</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var listItem in dataItem.ItemList)
+                        {
+                            <tr>
+                                <td>
+                                    <img src="@listItem.ImageUrl" style="height: 350px; width: 800px;" />
+                                </td>
+                                <td style="text-align:center;vertical-align: middle;">
+                                    <h2 style="margin-top:10px;margin-bottom:10px">@listItem.Title</h2>
+                                    <p>@listItem.ShortText</p>
+                                    <p>ITEM İD : @listItem.ItemId</p>
+                                    <a href="@Url.Action("Detay", "Home", new { itemId = listItem.ItemId })" class="btnDetay">Read More</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="border-top: 1px solid #ccc;"></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    }
+
+    <div class="pagination-container">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                        <a class="page-link" href="?page=@i">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+}
+else
+{
+    <p>No data available.</p>
+}
+
+
+<style>
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .pagination {
+        color: #60605F !important;
+        font-size: 14px !important;
+        margin-bottom: 10px;
+        margin-top: 50px;
+    }
+
+        .pagination li {
+            margin-right: 8px;
+        }
+
+        .pagination a {
+            color: red;
+            text-decoration: none;
+        }
+
+        .pagination .active .page-link {
+            background-color: #ff0000;
+            border-color: #ff0000;
+            color: #fff;
+        }
+
+    .fas.fa-search {
+        color: #ff0000;
+        border: none;
+        background-color: transparent;
+        padding: 0;
+        cursor: pointer;
+    }
+
+    #searchOptions {
+        display: flex;
+        align-items: center;
+    }
+
+    .form-control {
+        margin-top: 10px;
+    }
+
+    .btnDetay {
+        color: #ff0000;
+        border: none;
+        background-color: transparent;
+        padding: 0;
+        cursor: pointer;
+        padding-top: 20px;
+    }
+
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var searchOptions = document.getElementById('searchOptions');
+        var filterBtn = document.getElementById('filterBtn');
+
+        filterBtn.addEventListener('click', function () {
+            var category = document.getElementById('category').value;
+            var keyword = document.getElementById('keyword').value;
+
+            if (category === "") category = "All Categories";
+            if (keyword === "") keyword = "";
+
+            var url = `@Url.Action("Index", "Home")?category=${encodeURIComponent(category)}&keyword=${encodeURIComponent(keyword)}`;
+            window.location.href = url;
+        });
+
+        var searchBtn = document.getElementById('searchBtn');
+
+        searchBtn.addEventListener('click', function () {
+            if (searchOptions.style.display === 'none') {
+                searchOptions.style.display = 'block';
+            } else {
+                searchOptions.style.display = 'none';
+            }
+        });
+    });
+
+
+</script>
